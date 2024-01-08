@@ -4,7 +4,7 @@ Let's face it: we spend more time of our lives in the digital world than in the 
 
 End-to-end encryption is an invaluable tool to protect information and ensure secure communication. We're gonna cover how to establish a secure channel between two peers in which we can send obfuscated messages.
 
-# Crypto Attack: Getting Started
+## Crypto Attack: Getting Started
 
 Before starting, we're gonna need a list of materials that can be found in any basic modern home:
 
@@ -15,7 +15,7 @@ Before starting, we're gonna need a list of materials that can be found in any b
 
 Luckily, Apple's [CryptoKit](https://developer.apple.com/documentation/cryptokit) got us covered! This will be our tool of choice to handle the heavy lifting on cryptography. Another option available, suitable for cross-platform or server deployment, is [Swift Crypto](https://github.com/apple/swift-crypto). Just don't implement you own cryptographic algorithms, unless you absolutely know what you're doing (chances are you would have a PhD in mathematics).
 
-# Symmetric Cryptography
+## Symmetric Cryptography
 
 To encrypt a message, you need a key. The encrypted message can be decrypted using the same key. Let's start by defining a simple cipher:
 
@@ -80,7 +80,7 @@ One option is to share it via physical means, like in the good ol' days. But it'
 
 Enter asymmetric cryptography: Instead of using a single key, a key pair composed of a private and a public key will do the job. The private key is kept, well... *private*, while the public key is shared with the other party, as part of a [key agreement](https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange).
 
-# The Diffie-Hellman Key Exchange
+## The Diffie-Hellman Key Exchange
 
 Through some [very clever mathematical shenanigans](https://www.youtube.com/watch?v=Yjrfm_oRO0w), the same shared secret can be derived by combining the private and public keys of both parties. This aims to avoid leaking out any sensitive data, as openly distributing the public key does not compromise security, as long as the private key is stored safely. Hence, only the public key needs to be sent to the other party.
 
@@ -129,14 +129,14 @@ Each peer needs to be able to receive the counterpart's public key and create a 
 private(set) var symmetricKey: SymmetricKey?
 
 func deriveSymmetricKey(with publicKey: PublicKey) throws {
-        let sharedSecret = try privateKey.sharedSecretFromKeyAgreement(with: publicKey)
-        let sharedKey = sharedSecret.hkdfDerivedSymmetricKey(
-            using: SHA256.self,
-            salt: Data(),
-            sharedInfo: Data(),
-            outputByteCount: 32)
-        self.symmetricKey = sharedKey
-    }
+    let sharedSecret = try privateKey.sharedSecretFromKeyAgreement(with: publicKey)
+    let sharedKey = sharedSecret.hkdfDerivedSymmetricKey(
+        using: SHA256.self,
+        salt: Data(),
+        sharedInfo: Data(),
+        outputByteCount: 32)
+    self.symmetricKey = sharedKey
+}
 ```
 
 There are two things happening in here: 
@@ -170,7 +170,7 @@ try alice.deriveSymmetricKey(with: bob.publicKey)
 try bob.deriveSymmetricKey(with: alice.publicKey)
 ```
 
-# Sending an encrypted payload
+## Sending an encrypted payload
 
 Before we continue, let's improve our cipher to encrypt any kind of `Codable` object:
 
@@ -238,10 +238,14 @@ Ciphertext: "dÄz|(:¿|ª\\ì¹A¸U\u{13}áï)´ÿÎ?¤Jó®\u{13}IÈ�
 Decoded message: I'm a l33t h4x0r!
 ```
 
-And it is done. A very simple end-to-end encryption model working to safeguard the communication between Alice and Bob.
+And voilá, it is done. A very simple end-to-end encryption model working to safeguard the communication between Alice and Bob.
 
-# Important Considerations
+## Going Beyond the Basics
 
+- A private key can be persisted between sessions of an app, so that it can be reused, and it should be stored it securely, if so. The best option on iOS is to use the [Keychain service](https://developer.apple.com/documentation/security/keychain_services).
 
+- There's no guarantee that a message won't be changed before reaching its destination. A [message authentication code](https://en.wikipedia.org/wiki/Message_authentication_code) (MAC) can be introduced to allow a recipient to verify its authenticity and integrity.
 
-# Where to go from here
+- When communicating through a public network, a malicious actor can frontrun the key agreement response with a [man-in-the-middle](https://en.wikipedia.org/wiki/Man-in-the-middle_attack) attack. A robust encryption model must prevent this possibility.
+
+- Reusing the same shared key for all messages means that, if the key is stolen, all future messages are compromised. More advanced encryption models implement some sort of [forward secrecy](https://en.wikipedia.org/wiki/Forward_secrecy) to prevent this from happening.
