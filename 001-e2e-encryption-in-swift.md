@@ -15,6 +15,8 @@ Before starting, we're gonna need a list of materials that can be found in any b
 
 Luckily, Apple's [CryptoKit](https://developer.apple.com/documentation/cryptokit) got us covered! This will be our tool of choice to handle the heavy lifting on cryptography. Another option available, suitable for cross-platform or server deployment, is [Swift Crypto](https://github.com/apple/swift-crypto). Just don't implement you own cryptographic algorithms, unless you absolutely know what you're doing (chances are you would have a PhD in mathematics).
 
+![Implementing your own cryptography algorithms - Gaussian distribution meme](https://programmerhumor.io/wp-content/uploads/2023/12/programmerhumor-io-programming-memes-a2502782dfe8a6b.jpg)
+
 ## Symmetric Cryptography
 
 To encrypt a message, you need a key. The encrypted message can be decrypted using the same key. Let's start by defining a simple cipher:
@@ -76,7 +78,7 @@ As it can be verified, the ciphertext, when represented as an ASCII string, look
 
 If two parties are communicating over encryption, both need to have the same shared key. Thus, the key needs to be shared securely, or else a third actor that intercepts the key can easily break the encryption.
 
-One option is to share it via physical means, like in the good ol' days. But it's easy to see how impractical this would be for anything beyond your neighborhood.
+One option is to share it via physical means, like in the *Good Ol' Days™*. But it's easy to see how impractical this would be for anything beyond your neighborhood.
 
 Enter asymmetric cryptography: Instead of using a single key, a key pair composed of a private and a public key will do the job. The private key is kept, well... *private*, while the public key is shared with the other party, as part of a [key agreement](https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange).
 
@@ -240,12 +242,39 @@ Decoded message: I'm a l33t h4x0r!
 
 And voilá, it is done. A very simple end-to-end encryption model working to safeguard the communication between Alice and Bob.
 
+<img width="100%" style="width:100%" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExd2g5aTQ1NWx1bzk1OWNxNWgzbXVlaHQ0b3UxMWpjeHYwa3hvODNweSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/XreQmk7ETCak0/giphy.gif">
+
+### **Sample code:**  
+Here's an example project on **GitHub** to play with: [E2E-EncryptionBasics](https://github.com/SekiMondre/E2E-EncryptionBasics)
+
 ## Going Beyond the Basics
 
-- A private key can be persisted between sessions of an app, so that it can be reused, and it should be stored it securely, if so. The best option on iOS is to use the [Keychain service](https://developer.apple.com/documentation/security/keychain_services).
+- **A private key can be persisted** between sessions of an app, so that it can be reused, and it should be stored it securely, if so. The best option on iOS is to use the [Keychain service](https://developer.apple.com/documentation/security/keychain_services).
 
-- There's no guarantee that a message won't be changed before reaching its destination. A [message authentication code](https://en.wikipedia.org/wiki/Message_authentication_code) (MAC) can be introduced to allow a recipient to verify its authenticity and integrity.
+- **There's no guarantee that a message** won't be changed before reaching its destination. A [message authentication code](https://en.wikipedia.org/wiki/Message_authentication_code) (MAC) can be introduced to allow a recipient to verify its authenticity and integrity.
 
-- When communicating through a public network, a malicious actor can frontrun the key agreement response with a [man-in-the-middle](https://en.wikipedia.org/wiki/Man-in-the-middle_attack) attack. A robust encryption model must prevent this possibility.
+- **When communicating through a public network**, a malicious actor can frontrun the key agreement response with a [man-in-the-middle](https://en.wikipedia.org/wiki/Man-in-the-middle_attack) attack. A robust encryption model must prevent this possibility.
 
-- Reusing the same shared key for all messages means that, if the key is stolen, all future messages are compromised. More advanced encryption models implement some sort of [forward secrecy](https://en.wikipedia.org/wiki/Forward_secrecy) to prevent this from happening.
+- **Reusing the same shared key for all messages** means that, if the key is stolen, all future messages are compromised. More advanced encryption models implement some sort of [forward secrecy](https://en.wikipedia.org/wiki/Forward_secrecy) to prevent this from happening.
+
+## References
+
+Here are links to some references used in this article, if you want to get into some more in-depth exploration and discussions about what is happening behind the scenes when using cryptography:
+
+### Videos:
+
+#### [Computerphile: Diffie Hellman -the Mathematics bit-](https://www.youtube.com/watch?v=Yjrfm_oRO0w)
+
+#### [Computerphile: Elliptic Curves](https://www.youtube.com/watch?v=NF1pwjL9-DE)
+
+### Wikipedia Articles:
+
+#### [Diffie–Hellman key exchange](https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange)
+
+#### [Key derivation function](https://en.wikipedia.org/wiki/Key_derivation_function)
+
+### Code:
+
+#### [Apple's CryptoKit Docs](https://developer.apple.com/documentation/cryptokit)
+
+#### [Swift Crypto Repository](https://github.com/apple/swift-crypto) (For those who need cross-platform support)
